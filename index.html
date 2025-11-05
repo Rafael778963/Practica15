@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Brújula</h2>
+    <h3>Grados: <span id="grados">0</span></h3>
+
+    <div style="font-size: 100px;" id="flecha">
+        →
+    </div>
+
+
+
+    <script>
+        if (window.DeviceOrientationEvent) {
+            console.log("sdfsdfasdf");
+            window.addEventListener("deviceorientation", function (giroscopio) {
+              let grados = giroscopio.alpha;
+              if (grados !== null) {
+                let imprimirGrados = Math.round(grados);
+
+                document.getElementById("grados").textContent = imprimirGrados;
+
+                document.getElementById("flecha").style.transform = "rotate(" + imprimirGrados + "grados)";
+              }  
+            })
+        }else{
+            alert("Dipositivo no compatible");
+            document.body.innerHTML = "<h1>Dispositivo no compatible</h1>";
+        }
+    </script>
+</body>
+</html>
