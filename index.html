@@ -1,37 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brújula</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at center, #0b0c10, #1f2833);
+      color: #66fcf1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #c5c6c7;
+    }
+
+    #flecha {
+      font-size: 120px;
+      transition: transform 0.3s ease-out;
+      color: #66fcf1;
+      filter: drop-shadow(0 0 10px #45a29e);
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: #45a29e;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #66fcf1;
+      color: #0b0c10;
+    }
+
+  </style>
 </head>
 <body>
-    <h2>Brújula</h2>
-    <h3>Grados: <span id="grados">0</span></h3>
+  <h2>Brújula Digital</h2>
+  <h3>Grados: <span id="grados">0</span>°</h3>
 
-    <div style="font-size: 100px;" id="flecha">
-        →
-    </div>
+  <div id="flecha">→</div>
 
+  <button id="permiso">Dar permiso de movimiento</button>
 
+  <script>
+    const gradosEl = document.getElementById("grados");
+    const flecha = document.getElementById("flecha");
+    const boton = document.getElementById("permiso");
 
-    <script>
-        if (window.DeviceOrientationEvent) {
-            console.log("sdfsdfasdf");
-            window.addEventListener("deviceorientation", function (giroscopio) {
-              let grados = giroscopio.alpha;
-              if (grados !== null) {
-                let imprimirGrados = Math.round(grados);
+    function iniciarBrújula() {
+      if (window.DeviceOrientationEvent) {
+        window.addEventListener("deviceorientation", (giroscopio) => {
+          let grados = giroscopio.alpha;
+          if (grados !== null) {
+            let angulo = Math.round(grados);
+            gradosEl.textContent = angulo;
+            flecha.style.transform = "rotate(" + angulo + "deg)";
+          }
+        });
+      } else {
+        document.body.innerHTML = "<h1>Dispositivo no compatible 🛑</h1>";
+      }
+    }
 
-                document.getElementById("grados").textContent = imprimirGrados;
-
-                document.getElementById("flecha").style.transform = "rotate(" + imprimirGrados + "grados)";
-              }  
-            })
-        }else{
-            alert("Dipositivo no compatible");
-            document.body.innerHTML = "<h1>Dispositivo no compatible</h1>";
+    // Soporte para iPhone/iPad (Safari)
+    boton.addEventListener("click", async () => {
+      if (typeof DeviceOrientationEvent.requestPermission === "function") {
+        try {
+          const permiso = await DeviceOrientationEvent.requestPermission();
+          if (permiso === "granted") {
+            boton.style.display = "none";
+            iniciarBrújula();
+          } else {
+            alert("Permiso denegado.");
+          }
+        } catch (e) {
+          alert("Error al solicitar permiso: " + e);
         }
-    </script>
+      } else {
+        boton.style.display = "none";
+        iniciarBrújula();
+      }
+    });
+  </script>
 </body>
 </html>
